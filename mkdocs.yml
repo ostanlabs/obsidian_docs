@@ -1,0 +1,123 @@
+# =============================================================================
+# Obsidian AI Project Management Documentation - MkDocs Configuration
+# =============================================================================
+# Build: mkdocs build
+# Serve: mkdocs serve
+# =============================================================================
+
+site_name: Obsidian AI Project Management
+site_description: Manage your projects by talking to AI, visualize them in Obsidian
+site_url: https://obsidian-ai-pm.netlify.app
+repo_url: https://github.com/ostanlabs/obsidian_plugin
+repo_name: ostanlabs/obsidian_plugin
+
+# -----------------------------------------------------------------------------
+# Theme Configuration
+# -----------------------------------------------------------------------------
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+# -----------------------------------------------------------------------------
+# Plugins
+# -----------------------------------------------------------------------------
+plugins:
+  - search
+  - mermaid2
+
+# -----------------------------------------------------------------------------
+# Markdown Extensions
+# -----------------------------------------------------------------------------
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+# -----------------------------------------------------------------------------
+# Navigation
+# -----------------------------------------------------------------------------
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: getting-started/quick-start.md
+    - Installation: getting-started/installation.md
+    - First Project: getting-started/first-project.md
+  - User Guide:
+    - Overview: user-guide/overview.md
+    - AI Workflows: user-guide/ai-workflows.md
+    - Visual Canvas: user-guide/visual-canvas.md
+    - Entity Management: user-guide/entity-management.md
+    - Relationships: user-guide/relationships.md
+    - Best Practices: user-guide/best-practices.md
+  - Reference:
+    - Entity Schemas: reference/entity-schemas.md
+    - MCP Tools: reference/mcp-tools.md
+    - Plugin Commands: reference/plugin-commands.md
+    - Configuration: reference/configuration.md
+  - Examples:
+    - Sample Vault: examples/sample-vault.md
+    - Common Workflows: examples/workflows.md
+  - FAQ: faq.md
+
+# -----------------------------------------------------------------------------
+# Extra
+# -----------------------------------------------------------------------------
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ostanlabs/obsidian_plugin
+    - icon: fontawesome/brands/npm
+      link: https://www.npmjs.com/package/obsidian-accomplishments-mcp
+  generator: false
+  version:
+    provider: mike
+
