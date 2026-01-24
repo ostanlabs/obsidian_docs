@@ -163,19 +163,19 @@ Now let's see what we created!
 
 ```mermaid
 graph TD
-    M[M-001: Learn Obsidian PM<br/>Target: date | Priority: High]
-    S1[S-001: Set up<br/>✓ Complete]
-    S2[S-002: Create<br/>Not Started]
-    T1[T-001: Define goals]
-    T2[T-002: Break down]
-    T3[T-003: Create stories]
-    
+    M["M-001: Learn Obsidian PM<br/>Target: date, Priority: High"]
+    S1["S-001: Set up<br/>✓ Complete"]
+    S2["S-002: Create<br/>Not Started"]
+    T1["T-001: Define goals"]
+    T2["T-002: Break down"]
+    T3["T-003: Create stories"]
+
     M --> S1
     M --> S2
     S2 --> T1
     S2 --> T2
     S2 --> T3
-    
+
     style M fill:#e3f2fd
     style S1 fill:#c8e6c9
     style S2 fill:#fff9c4
