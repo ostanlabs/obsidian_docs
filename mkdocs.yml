@@ -97,11 +97,19 @@ nav:
     - Visual Canvas: user-guide/visual-canvas.md
     - Entity Management: user-guide/entity-management.md
     - Relationships: user-guide/relationships.md
+    - Relationship Reconciliation: user-guide/relationship-reconciliation.md
+    - Entity Navigator: user-guide/entity-navigator.md
+    - Feature Coverage: user-guide/feature-coverage.md
+    - Workspace Management: user-guide/workspace-management.md
+    - Semantic Search: user-guide/semantic-search.md
+    - CSS Patterns: user-guide/css-patterns.md
+    - Archive Structure: user-guide/archive-structure.md
+    - Workstream Normalization: user-guide/workstream-normalization.md
     - Best Practices: user-guide/best-practices.md
   - Reference:
     - Entity Schemas: reference/entity-schemas.md
-    - MCP Tools: reference/mcp-tools.md
-    - Plugin Commands: reference/plugin-commands.md
+    - MCP Tools: reference/mcp-tools-complete.md
+    - Plugin Commands: reference/plugin-commands-complete.md
     - Configuration: reference/configuration.md
   - Examples:
     - Sample Vault: examples/sample-vault.md
