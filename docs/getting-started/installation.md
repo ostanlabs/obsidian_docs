@@ -153,22 +153,81 @@ You should see tools like:
 
 The plugin enables visual project management on Obsidian Canvas.
 
-> ⚠️ **Note:** The plugin is currently under review for the Obsidian Community Plugin directory. For now, install from source.
+> 📦 **Available on npm:** Install the pre-built package or build from source for development.
 
-### Step 1: Clone Repository
+### Installation Methods
+
+Choose the method that works best for you:
+
+#### **Option A: Install from npm (Recommended)**
+
+This is the easiest method - no build required!
+
+**Step 1: Install Package**
+
+```bash
+npm install canvas-project-manager
+```
+
+**Step 2: Copy to Vault**
+
+```bash
+# Create plugin directory
+mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
+
+# Copy built files from node_modules
+cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
+  /path/to/vault/.obsidian/plugins/canvas-project-manager/
+```
+
+**Replace** `/path/to/vault` with your actual vault path.
+
+**Example:**
+
+```bash
+# macOS/Linux
+mkdir -p ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager
+cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
+  ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager/
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager"
+Copy-Item node_modules/canvas-project-manager/main.js,node_modules/canvas-project-manager/manifest.json,node_modules/canvas-project-manager/styles.css "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager\"
+```
+
+**Step 3: Enable Plugin in Obsidian**
+
+1. Open Obsidian
+2. Go to **Settings** (gear icon)
+3. Navigate to **Community Plugins**
+4. Click **Turn on community plugins** (if not already enabled)
+5. Find **Canvas Project Manager** in the list
+6. Toggle it **ON**
+
+✅ Plugin is now active!
+
+---
+
+#### **Option B: Build from Source (For Development)**
+
+Use this method if you want to contribute or modify the plugin.
+
+> ⚠️ **Note:** Requires Git and build tools. Only use this if you need to modify the plugin code.
+
+**Step 1: Clone Repository**
 
 ```bash
 git clone https://github.com/ostanlabs/obsidian_plugin.git
 cd obsidian_plugin
 ```
 
-### Step 2: Install Dependencies
+**Step 2: Install Dependencies**
 
 ```bash
 npm install
 ```
 
-### Step 3: Build Plugin
+**Step 3: Build Plugin**
 
 ```bash
 npm run build
@@ -179,9 +238,7 @@ This creates three files:
 - `manifest.json` - Plugin metadata
 - `styles.css` - Plugin styles
 
-### Step 4: Copy to Vault
-
-Create plugin directory and copy files:
+**Step 4: Copy to Vault**
 
 ```bash
 # Create plugin directory
@@ -191,21 +248,7 @@ mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
 cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/canvas-project-manager/
 ```
 
-**Replace** `/path/to/vault` with your actual vault path.
-
-**Example:**
-
-```bash
-# macOS/Linux
-mkdir -p ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager
-cp main.js manifest.json styles.css ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager/
-
-# Windows (PowerShell)
-New-Item -ItemType Directory -Force -Path "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager"
-Copy-Item main.js,manifest.json,styles.css "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager\"
-```
-
-### Step 5: Enable Plugin in Obsidian
+**Step 5: Enable Plugin in Obsidian
 
 1. Open Obsidian
 2. Go to **Settings** (gear icon)

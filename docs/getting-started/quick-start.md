@@ -58,30 +58,43 @@ This guide walks you through setting up the system and creating your first proje
 
 ## Step 2: Install Plugin (5 minutes)
 
-!!! warning "Note"
-    Plugin is under review. Install from source for now.
+!!! tip "npm Package Available"
+    The plugin is now available as an npm package for easy installation!
 
-1. Clone and build the plugin:
+**Choose your installation method:**
 
-```bash
-git clone https://github.com/ostanlabs/obsidian_plugin.git
-cd obsidian_plugin
-npm install
-npm run build
-```
+=== "npm (Recommended)"
 
-2. Copy to your vault:
+    ```bash
+    # Install package
+    npm install canvas-project-manager
 
-```bash
-mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
-cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/canvas-project-manager/
-```
+    # Copy to vault
+    mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
+    cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
+      /path/to/vault/.obsidian/plugins/canvas-project-manager/
+    ```
 
-3. In Obsidian:
-   - **Settings → Community Plugins → Enable Canvas Project Manager**
+=== "From Source"
 
-4. Create a canvas file:
-   - Create new file: `main.canvas`
+    ```bash
+    # Clone and build
+    git clone https://github.com/ostanlabs/obsidian_plugin.git
+    cd obsidian_plugin
+    npm install
+    npm run build
+
+    # Copy to vault
+    mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
+    cp main.js manifest.json styles.css \
+      /path/to/vault/.obsidian/plugins/canvas-project-manager/
+    ```
+
+**Enable in Obsidian:**
+- **Settings → Community Plugins → Enable Canvas Project Manager**
+
+**Create a canvas file:**
+- Create new file: `main.canvas`
 
 !!! check "Verify"
     Open command palette (`Ctrl/Cmd+P`) and search for "Project Canvas" - you should see plugin commands

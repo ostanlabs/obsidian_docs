@@ -11,7 +11,7 @@ This release brings the `obsidian_docs` documentation fully up-to-date with the 
 **Release Date:** February 28, 2026
 **Documentation Version:** 2.0
 **Software Versions:**
-- **obsidian-accomplishments-mcp:** v0.2.18
+- **obsidian-accomplishments-mcp:** v0.2.21
 - **canvas-project-manager:** v1.8.42
 
 **Target Audience:** Solo developers using AI-driven project management
