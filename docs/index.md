@@ -74,7 +74,7 @@ sequenceDiagram
 - Relationship visualization
 - Archive management
 
-🔧 **Status:** Under review (install from source)  
+📦 **NPM Package:** [canvas-project-manager](https://www.npmjs.com/package/canvas-project-manager)
 📂 **Repository:** [obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
 
 ---
