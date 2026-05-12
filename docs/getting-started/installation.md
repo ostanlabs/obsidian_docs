@@ -69,7 +69,7 @@ Open the configuration file and add the obsidian MCP server:
   "mcpServers": {
     "obsidian": {
       "command": "npx",
-      "args": ["-y", "obsidian-accomplishments-mcp"],
+      "args": ["-y", "@ostanlabs/obsidian-mcp"],
       "env": {
         "VAULT_PATH": "/absolute/path/to/your/vault",
         "DEFAULT_CANVAS": "main.canvas"
@@ -90,7 +90,7 @@ Open the configuration file and add the obsidian MCP server:
     },
     "obsidian": {
       "command": "npx",
-      "args": ["-y", "obsidian-accomplishments-mcp"],
+      "args": ["-y", "@ostanlabs/obsidian-mcp"],
       "env": {
         "VAULT_PATH": "/absolute/path/to/your/vault",
         "DEFAULT_CANVAS": "main.canvas"

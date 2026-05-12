@@ -31,7 +31,7 @@ This guide walks you through setting up the system and creating your first proje
       "mcpServers": {
         "obsidian": {
           "command": "npx",
-          "args": ["-y", "obsidian-accomplishments-mcp"],
+          "args": ["-y", "@ostanlabs/obsidian-mcp"],
           "env": {
             "VAULT_PATH": "/absolute/path/to/your/vault",
             "DEFAULT_CANVAS": "main.canvas"

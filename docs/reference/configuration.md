@@ -9,7 +9,7 @@ Configuration options for MCP server and plugin.
   "mcpServers": {
     "obsidian": {
       "command": "npx",
-      "args": ["-y", "obsidian-accomplishments-mcp"],
+      "args": ["-y", "@ostanlabs/obsidian-mcp"],
       "env": {
         "VAULT_PATH": "/path/to/vault",
         "DEFAULT_CANVAS": "main.canvas"

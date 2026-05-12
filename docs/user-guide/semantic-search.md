@@ -175,7 +175,7 @@ On first run, MSRL downloads the **bge-m3** embedding model (~615MB) from Huggin
 
 ```bash
 # Pre-download models (optional)
-npx obsidian-accomplishments-mcp download-models
+npx @ostanlabs/obsidian-mcp download-models
 
 # Or set custom model path
 export MSRL_MODEL_PATH=/path/to/models/bge-m3/model.onnx
@@ -249,7 +249,7 @@ Error: Failed to download bge-m3 model
 **Solution:** Check internet connection or manually download model:
 
 ```bash
-npx obsidian-accomplishments-mcp download-models
+npx @ostanlabs/obsidian-mcp download-models
 ```
 
 ### Slow Search

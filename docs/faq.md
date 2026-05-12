@@ -65,7 +65,7 @@ Coming soon:
   "mcpServers": {
     "obsidian": {
       "command": "npx",
-      "args": ["-y", "obsidian-accomplishments-mcp"],
+      "args": ["-y", "@ostanlabs/obsidian-mcp"],
       "env": {
         "VAULT_PATH": "/Users/john/Documents/MyVault",
         "DEFAULT_CANVAS": "main.canvas"

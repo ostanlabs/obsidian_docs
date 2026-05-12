@@ -63,7 +63,7 @@ sequenceDiagram
 - Dependency tracking and cycle detection
 - Search and filtering
 
-📦 **NPM Package:** [obsidian-accomplishments-mcp](https://www.npmjs.com/package/obsidian-accomplishments-mcp)
+📦 **NPM Package:** [@ostanlabs/obsidian-mcp](https://www.npmjs.com/package/@ostanlabs/obsidian-mcp)
 
 ### 2. Canvas Project Manager Plugin
 **Visual project management in Obsidian**
