@@ -4,6 +4,20 @@ Complete reference for all entity types in the Obsidian AI Project Management sy
 
 ---
 
+## The Runtime Schema: `schema.json`
+
+!!! info "This page describes the DEFAULT schema"
+    The schema that is actually in effect for a vault lives in **`<vault>/schema.json`** — it is the runtime single source of truth for both MCP validation and plugin canvas positioning.
+
+    - **Bootstrap:** on the MCP server's first run against a vault, `schema.json` is created from the built-in default schema documented on this page.
+    - **Editing:** change it with the [`set_schema`](mcp-tools-complete.md#set_schema) tool (full schema or relationships-only merge), or visually with [`get_schema_designer`](mcp-tools-complete.md#get_schema_designer). Invalid schemas are rejected and not saved.
+    - **Hot reload:** saved changes take effect immediately — MCP validation rules and the plugin's positioning both re-derive from the new schema without a restart.
+    - **Inspecting:** [`get_schema`](mcp-tools-complete.md#get_schema) returns the active schema, its source (`file` or `default`), and any validation errors. If `schema.json` is invalid, the server falls back to the default schema and surfaces the errors.
+
+    If your vault's `schema.json` has been customized, it — not this page — defines the valid types, statuses, fields, and relationships.
+
+---
+
 ## Entity Hierarchy
 
 ```mermaid
@@ -14,17 +28,16 @@ graph TD
     F[Feature<br/>F-xxx]
     D[Decision<br/>DEC-xxx]
     DOC[Document<br/>DOC-xxx]
-    
-    M -->|parent/children| S
-    S -->|parent/children| T
-    F -->|implements/implemented_by| S
-    D -->|affects| M
-    D -->|affects| S
-    D -->|affects| F
-    DOC -->|documents/documented_by| M
-    DOC -->|documents/documented_by| S
-    DOC -->|documents/documented_by| F
-    
+
+    S -->|parent| M
+    T -->|parent| S
+    M -->|implements| F
+    S -->|implements| F
+    DOC -->|documents| F
+    D -->|affects| DOC
+    D -->|supersedes| D
+    DOC -->|previous_version| DOC
+
     style M fill:#e3f2fd
     style S fill:#fff9c4
     style T fill:#ffe0b2
@@ -35,76 +48,39 @@ graph TD
 
 ---
 
-## Relationship Types
-
-```mermaid
-graph LR
-    A[Entity A] -->|depends_on| B[Entity B]
-    B -->|blocks| A
-    
-    C[Parent] -->|children| D[Child]
-    D -->|parent| C
-    
-    E[Feature] -->|implemented_by| F[Story]
-    F -->|implements| E
-    
-    G[Document] -->|documented_by| H[Entity]
-    H -->|documents| G
-    
-    I[Decision] -->|affects| J[Entity]
-    
-    style A fill:#ffe0b2
-    style B fill:#ffe0b2
-    style C fill:#e3f2fd
-    style D fill:#fff9c4
-    style E fill:#f3e5f5
-    style F fill:#fff9c4
-    style G fill:#fff3e0
-    style H fill:#e3f2fd
-    style I fill:#e8f5e9
-    style J fill:#fff9c4
-```
-
----
-
 ## Milestone
 
-**ID Format:** `M-001`, `M-002`, etc.
+**ID Format:** `M-001`, `M-002`, etc. — **Folder:** `milestones/`
 
 **Purpose:** High-level project phases or major deliverables
 
-### Schema
+**Statuses:** `Not Started` (default), `In Progress`, `Completed`, `Blocked`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (M-xxx) |
-| `title` | string | ✅ | Milestone name |
-| `status` | enum | ✅ | NotStarted, InProgress, Completed, Cancelled |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `priority` | enum | ❌ | Critical, High, Medium, Low |
-| `target_date` | date | ❌ | Target completion date |
-| `actual_date` | date | ❌ | Actual completion date |
-| `description` | string | ❌ | Detailed description |
-| `parent` | string | ❌ | Parent milestone ID |
-| `children` | array | ❌ | Child story/milestone IDs |
-| `depends_on` | array | ❌ | Dependency IDs |
-| `blocks` | array | ❌ | Blocked entity IDs |
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `priority` | enum: `Low`, `Medium`, `High`, `Critical` | ✅ | `Medium` | Priority level |
+| `target_date` | date | ❌ | — | Target completion date |
+| `owner` | string | ❌ | — | Owner |
+| `objective` | text | ❌ | — | Objective statement |
+| `success_criteria` | string[] | ❌ | — | Success criteria list |
 
 ### Example
 
 ```yaml
 ---
 id: M-001
+type: milestone
 title: MVP Launch
-status: InProgress
+status: In Progress
 workstream: engineering
 priority: Critical
-target_date: 2024-03-01
-description: Launch minimum viable product with core features
+target_date: 2026-03-01
+objective: Launch minimum viable product with core features
 children:
   - S-001
   - S-002
-  - S-003
 ---
 ```
 
@@ -112,40 +88,31 @@ children:
 
 ## Story
 
-**ID Format:** `S-001`, `S-002`, etc.
+**ID Format:** `S-001`, `S-002`, etc. — **Folder:** `stories/`
 
 **Purpose:** User-facing features or capabilities
 
-### Schema
+**Statuses:** `Not Started` (default), `In Progress`, `Completed`, `Blocked`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (S-xxx) |
-| `title` | string | ✅ | Story name |
-| `status` | enum | ✅ | NotStarted, InProgress, Completed, Cancelled |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `priority` | enum | ❌ | Critical, High, Medium, Low |
-| `points` | number | ❌ | Story points estimate |
-| `assignee` | string | ❌ | Assigned person |
-| `description` | string | ❌ | Detailed description |
-| `parent` | string | ❌ | Parent milestone ID |
-| `children` | array | ❌ | Child task IDs |
-| `depends_on` | array | ❌ | Dependency IDs |
-| `blocks` | array | ❌ | Blocked entity IDs |
-| `implements` | array | ❌ | Feature IDs this implements |
-| `documented_by` | array | ❌ | Document IDs |
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `priority` | enum: `Low`, `Medium`, `High`, `Critical` | ✅ | `Medium` | Priority level |
+| `outcome` | text | ❌ | — | Expected outcome |
+| `acceptance_criteria` | string[] | ❌ | — | Acceptance criteria list |
+| `notes` | text | ❌ | — | Free-form notes |
 
 ### Example
 
 ```yaml
 ---
 id: S-001
+type: story
 title: User Authentication
-status: InProgress
+status: In Progress
 workstream: engineering
 priority: High
-points: 8
-assignee: john
 parent: M-001
 children:
   - T-001
@@ -159,32 +126,34 @@ implements:
 
 ## Task
 
-**ID Format:** `T-001`, `T-002`, etc.
+**ID Format:** `T-001`, `T-002`, etc. — **Folder:** `tasks/`
 
 **Purpose:** Specific implementation work items
 
-### Schema
+**Statuses:** `Not Started` (default), `In Progress`, `Completed`, `Blocked`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (T-xxx) |
-| `title` | string | ✅ | Task name |
-| `status` | enum | ✅ | Open, InProgress, Complete, Cancelled |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `assignee` | string | ❌ | Assigned person |
-| `description` | string | ❌ | Detailed description |
-| `parent` | string | ❌ | Parent story ID |
-| `depends_on` | array | ❌ | Dependency IDs |
-| `blocks` | array | ❌ | Blocked entity IDs |
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `goal` | text | ✅ | — | What the task accomplishes |
+| `estimate_hrs` | number | ❌ | — | Estimated hours |
+| `actual_hrs` | number | ❌ | — | Actual hours spent |
+| `assignee` | string | ❌ | — | Assigned person |
+| `description` | text | ❌ | — | Detailed description |
+| `technical_notes` | text | ❌ | — | Technical notes |
+| `notes` | text | ❌ | — | Free-form notes |
 
 ### Example
 
 ```yaml
 ---
 id: T-001
+type: task
 title: Implement JWT token generation
-status: InProgress
+status: In Progress
 workstream: engineering
+goal: Generate and validate JWT tokens for the auth flow
 assignee: john
 parent: S-001
 depends_on:
@@ -194,83 +163,43 @@ depends_on:
 
 ---
 
-## Feature
-
-**ID Format:** `F-001`, `F-002`, etc.
-
-**Purpose:** Product features that span multiple stories
-
-### Schema
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (F-xxx) |
-| `title` | string | ✅ | Feature name |
-| `status` | enum | ✅ | Planned, InProgress, Completed, Cancelled |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `priority` | enum | ❌ | Critical, High, Medium, Low |
-| `description` | string | ❌ | Detailed description |
-| `implemented_by` | array | ❌ | Story IDs that implement this |
-| `depends_on` | array | ❌ | Dependency IDs |
-| `documented_by` | array | ❌ | Document IDs |
-
-### Example
-
-```yaml
----
-id: F-001
-title: User Management System
-status: InProgress
-workstream: engineering
-priority: High
-description: Complete user authentication and authorization system
-implemented_by:
-  - S-001
-  - S-002
-  - S-003
----
-```
-
----
-
 ## Decision
 
-**ID Format:** `DEC-001`, `DEC-002`, etc.
+**ID Format:** `DEC-001`, `DEC-002`, etc. — **Folder:** `decisions/`
 
 **Purpose:** Architectural and technical decisions (ADR-style)
 
-### Schema
+**Statuses:** `Pending` (default), `Decided`, `Superseded`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (DEC-xxx) |
-| `title` | string | ✅ | Decision title |
-| `status` | enum | ✅ | Proposed, Accepted, Rejected, Deprecated |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `date` | date | ❌ | Decision date |
-| `context` | string | ❌ | Background and context |
-| `decision` | string | ❌ | The decision made |
-| `consequences` | string | ❌ | Expected outcomes |
-| `affects` | array | ❌ | Entity IDs affected by this decision |
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `context` | text | ❌ | — | Background and context |
+| `decision` | text | ❌ | — | The decision made |
+| `rationale` | text | ❌ | — | Why this option was chosen |
+| `alternatives` | string[] | ❌ | — | Alternatives considered |
+| `decided_by` | string | ❌ | — | Person who decided (see note below) |
+| `decided_on` | date | ❌ | — | Decision date |
+
+!!! note "Two `decided_by` fields"
+    The decision entity's `decided_by` custom field is a **person** (string). It is distinct from the relationship reverse field `decided_by` that the decision-impact relationship writes onto the *targets* of `affects` (documents). They share a name but live on different entity types — no collision.
 
 ### Example
 
 ```yaml
 ---
 id: DEC-001
+type: decision
 title: Use PostgreSQL for Primary Database
-status: Accepted
+status: Decided
 workstream: engineering
-date: 2024-01-15
 context: Need reliable, ACID-compliant database with good JSON support
 decision: Use PostgreSQL 15+ as primary database
-consequences: |
-  - Pros: Mature, reliable, excellent JSON support
-  - Cons: More complex than SQLite for local dev
+rationale: Mature, reliable, excellent JSON support
+decided_on: 2026-01-15
 affects:
-  - S-001
-  - S-005
-  - M-001
+  - DOC-003
 ---
 ```
 
@@ -278,146 +207,169 @@ affects:
 
 ## Document
 
-**ID Format:** `DOC-001`, `DOC-002`, etc.
+**ID Format:** `DOC-001`, `DOC-002`, etc. — **Folder:** `documents/`
 
 **Purpose:** Specifications, designs, and technical documentation
 
-### Schema
+**Statuses:** `Draft` (default), `Review`, `Approved`, `Superseded`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (DOC-xxx) |
-| `title` | string | ✅ | Document title |
-| `type` | enum | ✅ | Spec, Design, RFC, Guide, API |
-| `status` | enum | ✅ | Draft, Review, Approved, Obsolete |
-| `workstream` | enum | ✅ | engineering, business, infra, research, design, marketing |
-| `author` | string | ❌ | Document author |
-| `date` | date | ❌ | Creation/update date |
-| `description` | string | ❌ | Document summary |
-| `documents` | array | ❌ | Entity IDs this documents |
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `doc_type` | enum: `spec`, `adr`, `vision`, `guide`, `research` | ✅ | `spec` | Document kind |
+| `version` | string | ❌ | — | Document version |
+| `owner` | string | ❌ | — | Document owner |
+| `implementation_context` | text | ❌ | — | Implementation context |
+| `content` | markdown | ❌ | — | Document body content |
 
 ### Example
 
 ```yaml
 ---
 id: DOC-001
+type: document
 title: Authentication API Specification
-type: Spec
 status: Approved
 workstream: engineering
-author: john
-date: 2024-01-20
-description: Complete API specification for authentication endpoints
+doc_type: spec
+version: "1.2"
+owner: john
 documents:
-  - S-001
   - F-001
 ---
 ```
 
 ---
 
-## Workstream Values
+## Feature
 
-All entities must have a `workstream` field with one of these values:
+**ID Format:** `F-001`, `F-002`, etc. — **Folder:** `features/`
 
-| Workstream | Description | Common Use |
-|------------|-------------|------------|
-| `engineering` | Technical implementation | Code, infrastructure, technical tasks |
-| `business` | Business operations | Strategy, planning, business decisions |
-| `infra` | Infrastructure & DevOps | Deployment, monitoring, infrastructure |
-| `research` | Research & exploration | Spikes, POCs, investigation |
-| `design` | Design & UX | UI/UX design, user research |
-| `marketing` | Marketing & growth | Content, SEO, campaigns |
+**Purpose:** Product features that span multiple stories
 
-!!! note "Workstream Normalization"
-    The system automatically normalizes common variations:
-    - `infrastructure` → `infra`
-    - `eng` → `engineering`
-    - `biz` → `business`
+**Statuses:** `Planned` (default), `In Progress`, `Complete`, `Deferred`
+
+### Fields
+
+| Field | Kind | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `user_story` | text | ✅ | — | "As a... I want... so that..." |
+| `tier` | enum: `OSS`, `Premium` | ✅ | `OSS` | Product tier |
+| `phase` | enum: `MVP`, `0`, `1`, `2`, `3`, `4`, `5` | ✅ | `MVP` | Roadmap phase |
+| `priority` | enum: `Low`, `Medium`, `High`, `Critical` | ❌ | — | Priority level |
+| `test_refs` | string[] | ❌ | — | Test references |
+| `content` | markdown | ❌ | — | Feature body content |
+
+### Example
+
+```yaml
+---
+id: F-001
+type: feature
+title: User Management System
+status: In Progress
+workstream: engineering
+user_story: As an admin, I want to manage users so that access stays controlled
+tier: OSS
+phase: MVP
+implemented_by:
+  - S-001
+  - S-002
+---
+```
 
 ---
 
-## Status Values
+## Status Values (Default Schema)
 
-### Milestone & Story Status
-
-- `NotStarted` - Not yet begun
-- `InProgress` - Currently being worked on
-- `Completed` - Finished
-- `Cancelled` - Abandoned
-
-### Task Status
-
-- `Open` - Not yet started
-- `InProgress` - Currently being worked on
-- `Complete` - Finished
-- `Cancelled` - Abandoned
-
-### Feature Status
-
-- `Planned` - Planned but not started
-- `InProgress` - Being implemented
-- `Completed` - Fully implemented
-- `Cancelled` - Abandoned
-
-### Decision Status
-
-- `Proposed` - Under consideration
-- `Accepted` - Approved and active
-- `Rejected` - Not approved
-- `Deprecated` - No longer applicable
-
-### Document Status
-
-- `Draft` - Work in progress
-- `Review` - Under review
-- `Approved` - Finalized
-- `Obsolete` - No longer current
-
----
+| Entity | Statuses (default in **bold**) |
+|--------|-------------------------------|
+| Milestone | **Not Started**, In Progress, Completed, Blocked |
+| Story | **Not Started**, In Progress, Completed, Blocked |
+| Task | **Not Started**, In Progress, Completed, Blocked |
+| Decision | **Pending**, Decided, Superseded |
+| Document | **Draft**, Review, Approved, Superseded |
+| Feature | **Planned**, In Progress, Complete, Deferred |
 
 ## Priority Values
 
-- `Critical` - Must be done immediately
-- `High` - Important, high priority
-- `Medium` - Normal priority
-- `Low` - Nice to have
+`Low`, `Medium`, `High`, `Critical` — an enum field on milestone, story (required, default `Medium`) and feature (optional).
 
 ---
 
-## Relationship Rules
+## Relationships (Default Schema)
+
+The default schema defines **7 relationships**. Each relationship has typed `from → to` pairs, a forward/reverse field pair, cardinality, a canvas edge style, and positioning metadata that drives the canvas layout.
+
+| Relationship | Pairs (from → to) | Forward / Reverse | Cardinality (fwd/rev) | Canvas edge | Positioning |
+|--------------|-------------------|-------------------|-----------------------|-------------|-------------|
+| **hierarchy** | task → story, story → milestone | `parent` / `children` | one / many | gray, solid | containment — child sits under its container (`to` end) |
+| **dependency** | milestone → milestone, story → story, task → task | `depends_on` / `blocks` | many / many | blue, dashed | sequencing — `depends_on` places the entity *after* its dependency (cross-workstream positioning suppressed for tasks) |
+| **implementation** | milestone → feature, story → feature | `implements` / `implemented_by` | many / many | purple, solid | containment — feature sits under its implementer (`from` end) |
+| **documentation** | document → feature | `documents` / `documented_by` | many / many | yellow, solid | containment — document sits under the feature (`to` end) |
+| **decision-impact** | decision → document | `affects` / `decided_by` | many / many | yellow, dotted | containment — decision sits under the document it affects (`to` end) |
+| **supersession** | decision → decision | `supersedes` / `superseded_by` | one / one | orange, solid | sequencing — the superseding decision comes *before* the one it replaces |
+| **versioning** | document → document | `previous_version` / `next_version` | one / one | gray, dashed | sequencing — newer version comes *after* the previous one |
 
 !!! info "Bidirectional Sync"
-    All relationships are automatically synced bidirectionally by the system
+    Forward/reverse pairs are kept consistent by [`reconcile_relationships`](mcp-tools-complete.md#reconcile_relationships) and enforced by [`validate_project`](mcp-tools-complete.md#validate_project). Cycle prevention applies to hierarchy, dependency, supersession, and versioning.
 
-### Hierarchy Relationships
+!!! note "Dependencies are same-type only"
+    In the default schema, `depends_on`/`blocks` is defined between entities of the **same type** (milestone→milestone, story→story, task→task).
 
-- `parent` ↔ `children` - Automatically synced
-- Milestones can contain Stories or other Milestones
-- Stories can contain Tasks
-- Tasks cannot have children
+---
 
-### Dependency Relationships
+## Workstreams
 
-- `depends_on` ↔ `blocks` - Automatically synced
-- Any entity can depend on any other entity
-- System detects and prevents circular dependencies
+The default schema defines 6 workstreams; the default is **`engineering`**:
 
-### Implementation Relationships
+| Workstream | Common Use |
+|------------|------------|
+| `engineering` | Code, technical implementation |
+| `business` | Strategy, planning, business decisions |
+| `infra` | Deployment, monitoring, infrastructure |
+| `research` | Spikes, POCs, investigation |
+| `design` | UI/UX design, user research |
+| `marketing` | Content, SEO, campaigns |
 
-- `implements` ↔ `implemented_by` - Automatically synced
-- Stories implement Features
-- Multiple stories can implement one feature
+!!! note "Workstream Normalization"
+    The system automatically normalizes these aliases:
 
-### Documentation Relationships
+    | Alias | Normalized to |
+    |-------|---------------|
+    | `infrastructure`, `ops`, `devops` | `infra` |
+    | `eng`, `dev`, `development` | `engineering` |
+    | `biz` | `business` |
+    | `rnd`, `r&d` | `research` |
+    | `ux`, `ui` | `design` |
+    | `mktg` | `marketing` |
 
-- `documents` ↔ `documented_by` - Automatically synced
-- Documents can document any entity type
-- One document can document multiple entities
+---
 
-### Decision Impact
+## Schema Settings (Default)
 
-- `affects` - One-way relationship
-- Decisions affect other entities
-- No reverse relationship
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `idPadding` | `3` | ID number zero-padding (`M-001`) |
+| `archiveLayout` | `by-type` | Archive folder layout |
+| `filenamePattern` | `{title}` | Title-only filenames (no ID prefix) |
+| `filenameCase` | `preserve` | Slugs preserve case; spaces → `_`, hyphens kept (e.g. `Add_90-day_retention_policy.md`) |
+| `overlapPriorityOrder` | milestone, story, task, decision, document, feature | Canvas overlap resolution: higher-priority nodes stay put |
 
+---
+
+## Deprecated: Legacy Frontmatter Aliases
+
+!!! warning "`created`, `updated`, and `effort` are no longer migrated"
+    Older vaults used `created` / `updated` / `effort` frontmatter keys (aliases of `created_at` / `updated_at` / `workstream`). The parser **no longer auto-migrates these on read** — they are kept as unknown passthrough keys and are ignored by validation and tooling. Use the canonical keys (`created_at`, `updated_at`, `workstream`) in new and updated entities.
+
+Unknown entity types in frontmatter are likewise kept literal (passthrough) rather than coerced.
+
+---
+
+## Next Steps
+
+- [MCP Tools Reference](mcp-tools-complete.md) - Create and update entities via AI
+- [Relationships Guide](../user-guide/relationships.md) - Managing entity relationships
+- [Configuration](configuration.md) - `schema.json` location and MCP setup

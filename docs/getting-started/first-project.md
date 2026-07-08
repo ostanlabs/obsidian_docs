@@ -98,13 +98,15 @@ Document key decisions:
 ```
 Create a decision for choosing Next.js:
 - Title: "Use Next.js for Static Site Generation"
-- Status: "Accepted"
+- Status: "Decided"
 - Workstream: "engineering"
 - Context: Need fast, SEO-friendly static site with good DX
 - Decision: Use Next.js with App Router
 - Consequences: Great performance, but learning curve for App Router
-- Affects: S-001, S-002
 ```
+
+!!! note "Decisions affect documents"
+    In the default schema, a decision's `affects` field targets the **documents** it changes — you'll link this decision to the spec document in Step 9. See [Relationships](../user-guide/relationships.md).
 
 ---
 
@@ -184,7 +186,12 @@ Create a document "Blog Post Component Spec" in workstream "engineering":
 - Props: title, date, content, author
 - Styling requirements
 - Accessibility requirements
-- Documents S-002
+```
+
+Then connect the decision from Step 4:
+
+```
+Update DEC-001 so it affects DOC-001
 ```
 
 ---

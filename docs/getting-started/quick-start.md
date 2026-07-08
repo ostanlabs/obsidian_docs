@@ -11,12 +11,31 @@ This guide walks you through setting up the system and creating your first proje
 
 - [x] **Obsidian** installed
 - [x] **Node.js** 18+ installed
-- [x] **Claude Desktop** or **Cursor** IDE
+- [x] **Claude Code**, **Claude Desktop**, or **Cursor** IDE
 - [x] An empty Obsidian vault (or create a new one)
 
 ---
 
 ## Step 1: Install MCP Server (5 minutes)
+
+The MCP server is a **bundled stdio server** built from the plugin repository (the same build also produces the plugin — one clone covers both steps):
+
+```bash
+git clone https://github.com/ostanlabs/obsidian_plugin.git
+cd obsidian_plugin
+npm install
+npm run build        # builds the plugin AND bin/mcp-server.mjs
+```
+
+Then register it, pointing `VAULT_PATH` at your project folder:
+
+=== "Claude Code"
+
+    ```bash
+    claude mcp add obsidian-mcp \
+      -e VAULT_PATH="/absolute/path/to/your/vault" \
+      -- node /absolute/path/to/obsidian_plugin/bin/mcp-server.mjs
+    ```
 
 === "Claude Desktop"
 
@@ -29,64 +48,66 @@ This guide walks you through setting up the system and creating your first proje
     ```json
     {
       "mcpServers": {
-        "obsidian": {
-          "command": "npx",
-          "args": ["-y", "@ostanlabs/obsidian-mcp"],
-          "env": {
-            "VAULT_PATH": "/absolute/path/to/your/vault",
-            "DEFAULT_CANVAS": "main.canvas"
-          }
+        "obsidian-mcp": {
+          "command": "node",
+          "args": ["/absolute/path/to/obsidian_plugin/bin/mcp-server.mjs"],
+          "env": { "VAULT_PATH": "/absolute/path/to/your/vault" }
         }
       }
     }
     ```
 
-    3. **Replace** `/absolute/path/to/your/vault` with your actual vault path
+    3. **Replace** both absolute paths with your actual repo and vault paths
 
     4. **Restart Claude Desktop**
 
 === "Cursor"
 
     1. Open Cursor Settings → MCP Servers
-    2. Add new server with the same configuration as above
+    2. Add new server with the same JSON configuration as the Claude Desktop tab
     3. Restart Cursor
 
 !!! check "Verify"
-    Ask Claude/Cursor: "List available MCP tools" - you should see obsidian tools listed
+    Ask Claude/Cursor: "List available MCP tools" - you should see obsidian tools listed. On first use, the server bootstraps a `schema.json` in your project folder.
 
 ---
 
 ## Step 2: Install Plugin (5 minutes)
 
-!!! tip "npm Package Available"
-    The plugin is now available as an npm package for easy installation!
+!!! tip "You already built it"
+    The `npm run build` from Step 1 produced the plugin files (`main.js`, `manifest.json`, `styles.css`) in the repo root.
 
 **Choose your installation method:**
 
-=== "npm (Recommended)"
+=== "From Step 1 Build (Recommended)"
 
     ```bash
-    # Install package
-    npm install canvas-project-manager
-
-    # Copy to vault
+    # From the obsidian_plugin repo built in Step 1
     mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
-    cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
+    cp main.js manifest.json styles.css \
       /path/to/vault/.obsidian/plugins/canvas-project-manager/
     ```
 
-=== "From Source"
+=== "GitHub Release"
+
+    Download `main.js`, `manifest.json`, and `styles.css` from the
+    [latest release](https://github.com/ostanlabs/obsidian_plugin/releases), then:
 
     ```bash
-    # Clone and build
-    git clone https://github.com/ostanlabs/obsidian_plugin.git
-    cd obsidian_plugin
-    npm install
-    npm run build
+    mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
+    cp ~/Downloads/{main.js,manifest.json,styles.css} \
+      /path/to/vault/.obsidian/plugins/canvas-project-manager/
+    ```
+
+=== "npm"
+
+    ```bash
+    # Install package
+    npm install @ostanlabs/canvas-project-manager
 
     # Copy to vault
     mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
-    cp main.js manifest.json styles.css \
+    cp node_modules/@ostanlabs/canvas-project-manager/{main.js,manifest.json,styles.css} \
       /path/to/vault/.obsidian/plugins/canvas-project-manager/
     ```
 

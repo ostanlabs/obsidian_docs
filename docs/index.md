@@ -54,6 +54,8 @@ sequenceDiagram
 
 ## Components
 
+Both components build from the **same repository** and share one entity engine — see [What's New](#whats-new) below.
+
 ### 1. Obsidian MCP Server
 **AI-native project management via Model Context Protocol**
 
@@ -63,7 +65,7 @@ sequenceDiagram
 - Dependency tracking and cycle detection
 - Search and filtering
 
-📦 **NPM Package:** [@ostanlabs/obsidian-mcp](https://www.npmjs.com/package/@ostanlabs/obsidian-mcp)
+🖥️ **Bundled stdio server:** `bin/mcp-server.mjs`, built from the plugin repo (`npm run build:mcp`) and pointed at your project folder via the `VAULT_PATH` environment variable — see [Installation](getting-started/installation.md)
 
 ### 2. Canvas Project Manager Plugin
 **Visual project management in Obsidian**
@@ -74,8 +76,21 @@ sequenceDiagram
 - Relationship visualization
 - Archive management
 
-📦 **NPM Package:** [canvas-project-manager](https://www.npmjs.com/package/canvas-project-manager)
-📂 **Repository:** [obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
+📦 **NPM Package:** [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager) (v1.8.94)
+📂 **Repository & Releases:** [ostanlabs/obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
+
+---
+
+## What's New
+
+!!! success "One engine, two surfaces"
+    The plugin and the MCP server now share **one entity model, one schema-driven YAML parser, and one project index** from a common entity-core. Files are **byte-identical** whether the plugin, the MCP server, or Claude writes them — both can work on the same vault concurrently, and fixes land once for both surfaces.
+
+- **Title-only filenames** — entity files are named after their title (e.g. `Build_Auth_System.md`); the entity ID lives in frontmatter, not the filename. YAML is serialized quote-when-needed (plain scalars unless quoting is required).
+- **`schema.json` is the single source of truth** — entity types, relationships, positioning, and workstreams are runtime-editable via `set_schema` or the interactive HTML designer, and hot-reload into both MCP validation and plugin positioning. See [Schema & Customization](user-guide/schema-and-customization.md).
+- **Containment-chain positioning** — the canvas nests decision → document → feature → implementing story/milestone → workstream lane, and multi-target decisions/documents now resolve fully instead of falling into the orphan grid. See [Visual Canvas](user-guide/visual-canvas.md).
+- **Validation advisories** — `validate_project` now surfaces non-blocking fan-out guidance (document ≤ 2 features, decision ≤ 2 documents, feature ≤ 3 implementers) with concrete reorganization suggestions. See [Relationships](user-guide/relationships.md).
+- **Stricter parser semantics** — legacy `created`/`updated`/`effort` aliases are no longer auto-migrated (use `created_at`/`updated_at`/`workstream`); a missing workstream defaults to `engineering`; unknown entity types are kept literal and flagged by validation. See the [FAQ](faq.md).
 
 ---
 

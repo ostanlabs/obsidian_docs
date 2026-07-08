@@ -97,6 +97,7 @@ nav:
     - Visual Canvas: user-guide/visual-canvas.md
     - Entity Management: user-guide/entity-management.md
     - Relationships: user-guide/relationships.md
+    - Schema & Customization: user-guide/schema-and-customization.md
     - Relationship Reconciliation: user-guide/relationship-reconciliation.md
     - Entity Navigator: user-guide/entity-navigator.md
     - Feature Coverage: user-guide/feature-coverage.md
@@ -124,7 +125,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/ostanlabs/obsidian_plugin
     - icon: fontawesome/brands/npm
-      link: https://www.npmjs.com/package/obsidian-accomplishments-mcp
+      link: https://www.npmjs.com/package/@ostanlabs/canvas-project-manager
   generator: false
   version:
     provider: mike

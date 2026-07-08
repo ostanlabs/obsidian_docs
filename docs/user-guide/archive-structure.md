@@ -25,30 +25,30 @@ The Archive System provides a **flat, type-based structure** for storing complet
 vault/
 ├── archive/
 │   ├── milestones/
-│   │   ├── M-001_q1-release.md
-│   │   ├── M-002_mvp-launch.md
-│   │   └── M-003_beta-testing.md
+│   │   ├── Q1_Release.md
+│   │   ├── MVP_Launch.md
+│   │   └── Beta_Testing.md
 │   ├── stories/
-│   │   ├── S-015_user-authentication.md
-│   │   ├── S-016_api-integration.md
-│   │   └── S-042_payment-processing.md
+│   │   ├── User_Authentication.md
+│   │   ├── API_Integration.md
+│   │   └── Payment_Processing.md
 │   ├── tasks/
-│   │   ├── T-001_implement-jwt.md
-│   │   ├── T-002_write-tests.md
-│   │   └── T-038_deploy-staging.md
+│   │   ├── Implement_JWT.md
+│   │   ├── Write_Tests.md
+│   │   └── Deploy_Staging.md
 │   ├── decisions/
-│   │   ├── DEC-001_use-postgresql.md
-│   │   └── DEC-002_oauth-provider.md
+│   │   ├── Use_PostgreSQL.md
+│   │   └── OAuth_Provider.md
 │   ├── documents/
-│   │   ├── DOC-001_auth-spec.md
-│   │   └── DOC-002_api-design.md
+│   │   ├── Auth_Spec.md
+│   │   └── API_Design.md
 │   └── features/
-│       ├── F-001_authentication.md
-│       └── F-002_user-management.md
+│       ├── Authentication.md
+│       └── User_Management.md
 ├── milestones/
-│   └── M-004_current-sprint.md  (active)
+│   └── Current_Sprint.md  (active)
 ├── stories/
-│   └── S-050_new-feature.md  (active)
+│   └── New_Feature.md  (active)
 └── tasks/
     └── T-100_current-task.md  (active)
 ```
@@ -57,7 +57,7 @@ vault/
 
 1. **Flat by Type** - All archived milestones in one folder, regardless of original hierarchy
 2. **No Nesting** - Tasks don't go under stories, stories don't go under milestones
-3. **Filename Preserved** - Original filename maintained (e.g., `M-001_q1-release.md`)
+3. **Filename Preserved** - Original filename maintained (e.g., `Q1_Release.md`)
 4. **Metadata Intact** - All frontmatter and relationships preserved
 
 ---
@@ -119,7 +119,7 @@ AI assistants can archive entities using the `update_entity` tool:
 {
   "id": "S-015",
   "archived": true,
-  "archive_path": "archive/stories/S-015_user-authentication.md",
+  "archive_path": "archive/stories/User_Authentication.md",
   "removed_from_canvas": true
 }
 ```
@@ -140,12 +140,12 @@ AI assistants can archive entities using the `update_entity` tool:
 
 **Before:**
 ```
-stories/S-015_user-authentication.md
+stories/User_Authentication.md
 ```
 
 **After:**
 ```
-archive/stories/S-015_user-authentication.md
+archive/stories/User_Authentication.md
 ```
 
 ---
@@ -172,11 +172,11 @@ archive/stories/S-015_user-authentication.md
 
 **Result:**
 ```
-archive/milestones/M-001_q1-release.md
-archive/stories/S-015_user-authentication.md
-archive/stories/S-016_api-integration.md
-archive/tasks/T-001_implement-jwt.md
-archive/tasks/T-002_write-tests.md
+archive/milestones/Q1_Release.md
+archive/stories/User_Authentication.md
+archive/stories/API_Integration.md
+archive/tasks/Implement_JWT.md
+archive/tasks/Write_Tests.md
 ```
 
 **Note:** All children archived recursively.
@@ -243,8 +243,8 @@ archive/tasks/T-002_write-tests.md
 
 **Result:**
 ```
-Before: archive/stories/S-015_user-authentication.md
-After:  stories/S-015_user-authentication.md
+Before: archive/stories/User_Authentication.md
+After:  stories/User_Authentication.md
 Status: Not Started
 ```
 
@@ -324,7 +324,7 @@ Archived entities maintain their relationships:
 
 **Example:**
 ```yaml
-# archive/stories/S-015_user-authentication.md
+# archive/stories/User_Authentication.md
 parent: M-001  # Still references active milestone
 implements: F-001  # Still implements feature
 depends_on: [S-012, S-013]  # Dependencies preserved
@@ -453,11 +453,11 @@ Archived entities are excluded from most operations.
 
 **Result:**
 ```
-archive/milestones/M-001_sprint-15.md
-archive/stories/S-015_feature-a.md
-archive/stories/S-016_feature-b.md
-archive/tasks/T-001_task-a.md
-archive/tasks/T-002_task-b.md
+archive/milestones/Sprint_15.md
+archive/stories/Feature_A.md
+archive/stories/Feature_B.md
+archive/tasks/Task_A.md
+archive/tasks/Task_B.md
 ```
 
 ---
@@ -496,8 +496,8 @@ Remove them from the canvas."
 
 **Result:**
 ```
-Before: archive/stories/S-042_payment-processing.md (status: cancelled)
-After:  stories/S-042_payment-processing.md (status: in-progress)
+Before: archive/stories/Payment_Processing.md (status: cancelled)
+After:  stories/Payment_Processing.md (status: in-progress)
 ```
 
 ---
@@ -508,7 +508,7 @@ After:  stories/S-042_payment-processing.md (status: in-progress)
 
 **Frontmatter:**
 ```yaml
-# stories/S-050_new-feature.md
+# stories/New_Feature.md
 id: S-050
 type: story
 title: New Feature

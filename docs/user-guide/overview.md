@@ -46,6 +46,18 @@ This system is designed around a specific workflow:
 - **AI does the work** (creating, updating, analyzing)
 - **Human reviews visually** (canvas, relationships, progress)
 
+### One Engine, Two Surfaces
+
+The Obsidian plugin and the MCP server build from the **same repository** and share one entity model, one schema-driven YAML parser, and one project index. In practice:
+
+- **Byte-identical writes** — a file looks exactly the same whether the plugin, the MCP server, or Claude wrote it (YAML is serialized quote-when-needed: plain scalars unless quoting is required)
+- **Concurrent use is safe** — both surfaces can work on the same vault at the same time
+- **Title-only filenames** — entity files are named after their title (e.g. `Build_Auth_System.md`); the entity ID lives in frontmatter, **not** the filename
+- **One schema** — both surfaces read the vault's [`schema.json`](schema-and-customization.md), so validation and positioning always agree
+
+!!! note "Legacy frontmatter aliases are gone"
+    The parser no longer auto-migrates `created`, `updated`, or `effort` on read — use `created_at`, `updated_at`, and `workstream`. A missing `workstream` defaults to `engineering`, and unknown entity types are kept literal (and flagged by validation) rather than coerced to `task`. See the [FAQ](../faq.md#entity-management) for details.
+
 ### Entity Hierarchy
 
 Projects are organized in a 3-tier hierarchy:
@@ -64,9 +76,9 @@ Document (DOC-xxx)    ← Specs, ADRs, guides
 
 ### Workstreams
 
-All entities belong to a **workstream** (organizational grouping):
+All entities belong to a **workstream** (organizational grouping). The default set (defined in [`schema.json`](schema-and-customization.md)):
 
-- `engineering` - Technical development
+- `engineering` - Technical development (the **default** when no workstream is given)
 - `business` - Business logic, product
 - `infra` - Infrastructure, DevOps
 - `research` - R&D, experiments
@@ -75,10 +87,9 @@ All entities belong to a **workstream** (organizational grouping):
 
 **Workstream Normalization:**
 The system automatically normalizes workstream names:
-- `infrastructure`, `infra` → `infra`
+- `infrastructure`, `ops`, `devops` → `infra`
 - `eng`, `dev`, `development` → `engineering`
 - `biz` → `business`
-- `ops`, `operations` → `operations`
 - `r&d`, `rnd` → `research`
 - `ux`, `ui` → `design`
 - `mktg` → `marketing`
@@ -90,15 +101,18 @@ Entities can have multiple types of relationships:
 | Relationship | Forward | Reverse | Description |
 |--------------|---------|---------|-------------|
 | **Hierarchy** | `parent` | `children` | Parent-child structure |
-| **Dependency** | `depends_on` | `blocks` | Task dependencies |
-| **Implementation** | `implements` | `implemented_by` | Story implements Feature/Doc |
+| **Dependency** | `depends_on` | `blocks` | Same-type dependencies |
+| **Implementation** | `implements` | `implemented_by` | Story/Milestone implements Feature |
 | **Documentation** | `documents` | `documented_by` | Doc describes Feature |
-| **Decision Impact** | - | `affects` | Decision affects entities |
-| **Supersession** | `supersedes` | `superseded_by` | Replaces older version |
+| **Decision Impact** | `affects` | `decided_by` | Decision affects Documents |
+| **Supersession** | `supersedes` | `superseded_by` | Decision replaces older decision |
+| **Versioning** | `previous_version` | `next_version` | Document version chain |
 
 **All relationships are bidirectional and auto-synced!**
 
 When you set `S-001.parent = M-001`, the system automatically adds `S-001` to `M-001.children`.
+
+See [Relationships](relationships.md) for the full details, including how relationships drive canvas positioning.
 
 ---
 
@@ -190,7 +204,7 @@ status: Decided                 # Pending | Decided | Superseded
 workstream: engineering
 decided_by: john
 decided_on: 2026-01-15
-affects: [S-001, S-003, DOC-001]  # Entities affected by this decision
+affects: [DOC-001]              # Documents affected (first target = canvas anchor)
 context: "Need reliable ACID transactions..."
 decision: "Use PostgreSQL 15..."
 consequences: "Team needs to learn SQL..."
@@ -213,7 +227,7 @@ type: document
 title: "API Design Specification"
 status: Approved                # Draft | Review | Approved | Superseded
 workstream: engineering
-doc_type: spec                  # spec | adr | guide | reference
+doc_type: spec                  # spec | adr | vision | guide | research
 version: "1.0"
 implemented_by: [S-001, S-002]  # Stories implementing this doc
 documents: [F-001]              # Features this documents

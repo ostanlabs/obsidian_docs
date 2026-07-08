@@ -14,13 +14,17 @@ The sample vault demonstrates a SaaS product development project with:
 
 ```
 sample-vault/
+├── schema.json
 ├── milestones/
-│   └── M-001_MVP_Foundation.md
+│   └── MVP_Foundation.md
 ├── stories/
-│   └── S-001_User_Authentication.md
+│   └── User_Authentication.md
 └── decisions/
-    └── DEC-001_PostgreSQL_Database.md
+    └── PostgreSQL_Database.md
 ```
+
+!!! note "Title-only filenames"
+    Entity files are named after their **title** — the entity ID (`M-001`, `S-001`, `DEC-001`) lives in the YAML frontmatter, not the filename. The `schema.json` is bootstrapped by the MCP server on first run.
 
 ## Viewing the Sample
 

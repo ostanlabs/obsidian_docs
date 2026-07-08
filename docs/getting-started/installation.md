@@ -21,6 +21,7 @@
 - **Obsidian** - Latest version ([download](https://obsidian.md/))
 - **Node.js** - Version 18 or later ([download](https://nodejs.org/))
 - **AI Assistant** - One of:
+  - Claude Code ([docs](https://docs.claude.com/en/docs/claude-code))
   - Claude Desktop ([download](https://claude.ai/download))
   - Cursor IDE ([download](https://cursor.sh/))
 
@@ -45,92 +46,77 @@ npm --version
 
 ## MCP Server Installation
 
-The MCP server enables AI assistants to manage your project entities. Install this **first**.
+The MCP server enables AI assistants to manage your project entities. It is the **bundled stdio server** `bin/mcp-server.mjs`, built from the same repository as the plugin — both share one entity engine and on-disk format, so they can work on the same vault concurrently.
 
-### Step 1: Locate Configuration File
+!!! warning "Outdated setups"
+    Older docs referenced `npx @ostanlabs/obsidian-mcp` or `obsidian-accomplishments-mcp`. These are outdated — the MCP server is now built from the plugin repository as described below.
 
-The configuration file location depends on your AI assistant:
+### Step 1: Build the Server
 
-**Claude Desktop:**
-- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-- **Linux:** `~/.config/Claude/claude_desktop_config.json`
-
-**Cursor:**
-- Open Cursor → Settings → Features → MCP Servers
-- Or edit: `~/.cursor/mcp_config.json`
-
-### Step 2: Add MCP Server Configuration
-
-Open the configuration file and add the obsidian MCP server:
-
-```json
-{
-  "mcpServers": {
-    "obsidian": {
-      "command": "npx",
-      "args": ["-y", "@ostanlabs/obsidian-mcp"],
-      "env": {
-        "VAULT_PATH": "/absolute/path/to/your/vault",
-        "DEFAULT_CANVAS": "main.canvas"
-      }
-    }
-  }
-}
+```bash
+git clone https://github.com/ostanlabs/obsidian_plugin.git
+cd obsidian_plugin
+npm install
+npm run build        # builds the plugin AND bin/mcp-server.mjs
 ```
 
-**If you already have other MCP servers**, add the obsidian entry to the existing `mcpServers` object:
+(You can build only the server with `npm run build:mcp`.)
 
-```json
-{
-  "mcpServers": {
-    "existing-server": {
-      "command": "...",
-      "args": ["..."]
-    },
-    "obsidian": {
-      "command": "npx",
-      "args": ["-y", "@ostanlabs/obsidian-mcp"],
-      "env": {
-        "VAULT_PATH": "/absolute/path/to/your/vault",
-        "DEFAULT_CANVAS": "main.canvas"
+### Step 2: Register with Your AI Assistant
+
+The server speaks MCP over **stdio** and targets one project folder via the `VAULT_PATH` environment variable — the folder that contains `milestones/`, `stories/`, `tasks/`, etc. On first run it bootstraps a `schema.json` there if none exists.
+
+=== "Claude Code (CLI)"
+
+    ```bash
+    claude mcp add obsidian-mcp \
+      -e VAULT_PATH="/path/to/vault/Projects/YourProject" \
+      -- node /absolute/path/to/obsidian_plugin/bin/mcp-server.mjs
+    ```
+
+=== "Claude Desktop / JSON config"
+
+    Configuration file location:
+
+    - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+    - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+    - **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+    ```json
+    {
+      "mcpServers": {
+        "obsidian-mcp": {
+          "command": "node",
+          "args": ["/absolute/path/to/obsidian_plugin/bin/mcp-server.mjs"],
+          "env": { "VAULT_PATH": "/path/to/vault/Projects/YourProject" }
+        }
       }
     }
-  }
-}
-```
+    ```
 
-### Step 3: Configure Environment Variables
+    If you already have other MCP servers, add the `obsidian-mcp` entry to the existing `mcpServers` object.
 
-Replace the placeholder values:
+=== "Cursor"
+
+    Open Cursor → Settings → Features → MCP Servers (or edit `~/.cursor/mcp_config.json`) and add the same JSON entry as the Claude Desktop tab.
+
+### Step 3: Configure VAULT_PATH
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `VAULT_PATH` | **Absolute path** to your Obsidian vault | `/Users/john/Documents/MyVault` |
-| `DEFAULT_CANVAS` | Path to main canvas file (relative to vault) | `main.canvas` or `projects/main.canvas` |
+| `VAULT_PATH` | **Absolute path** to your project folder (inside your vault) | `/Users/john/Vault/Projects/MyProject` |
 
 **Important:**
 - Use **absolute paths** for `VAULT_PATH`
 - Use **forward slashes** (`/`) even on Windows
 - No trailing slash on `VAULT_PATH`
-
-**Examples:**
-
-```json
-// macOS
-"VAULT_PATH": "/Users/john/Documents/ProjectVault"
-
-// Windows (use forward slashes!)
-"VAULT_PATH": "C:/Users/John/Documents/ProjectVault"
-
-// Linux
-"VAULT_PATH": "/home/john/vault"
-```
+- Point at the **project folder** (the one holding the entity folders), not necessarily the vault root
 
 ### Step 4: Restart AI Assistant
 
 - **Claude Desktop:** Quit completely and restart
 - **Cursor:** Restart the application
+- **Claude Code:** Run `/mcp` to (re)connect — also do this after rebuilding the server
 
 ### Step 5: Verify Installation
 
@@ -145,6 +131,7 @@ You should see tools like:
 - `update_entity`
 - `search_entities`
 - `get_project_overview`
+- `get_schema`
 - etc.
 
 ---
@@ -153,20 +140,46 @@ You should see tools like:
 
 The plugin enables visual project management on Obsidian Canvas.
 
-> 📦 **Available on npm:** Install the pre-built package or build from source for development.
+> 📦 **Current version: 1.8.94** — available from [GitHub Releases](https://github.com/ostanlabs/obsidian_plugin/releases), on npm as [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager), or built from source.
+
+!!! tip "Already cloned the repo?"
+    If you built the MCP server above, `npm run build` already produced the plugin files (`main.js`, `manifest.json`, `styles.css`) in the repo root — skip to Step 2 of Option C.
 
 ### Installation Methods
 
 Choose the method that works best for you:
 
-#### **Option A: Install from npm (Recommended)**
+#### **Option A: GitHub Release (Recommended)**
 
-This is the easiest method - no build required!
+No build required.
+
+**Step 1: Download Release Assets**
+
+Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/ostanlabs/obsidian_plugin/releases).
+
+**Step 2: Copy to Vault**
+
+```bash
+# Create plugin directory
+mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
+
+# Copy the downloaded files
+cp ~/Downloads/{main.js,manifest.json,styles.css} \
+  /path/to/vault/.obsidian/plugins/canvas-project-manager/
+```
+
+**Replace** `/path/to/vault` with your actual vault path.
+
+**Step 3: Enable Plugin in Obsidian** (see below)
+
+---
+
+#### **Option B: Install from npm**
 
 **Step 1: Install Package**
 
 ```bash
-npm install canvas-project-manager
+npm install @ostanlabs/canvas-project-manager
 ```
 
 **Step 2: Copy to Vault**
@@ -176,23 +189,8 @@ npm install canvas-project-manager
 mkdir -p /path/to/vault/.obsidian/plugins/canvas-project-manager
 
 # Copy built files from node_modules
-cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
+cp node_modules/@ostanlabs/canvas-project-manager/{main.js,manifest.json,styles.css} \
   /path/to/vault/.obsidian/plugins/canvas-project-manager/
-```
-
-**Replace** `/path/to/vault` with your actual vault path.
-
-**Example:**
-
-```bash
-# macOS/Linux
-mkdir -p ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager
-cp node_modules/canvas-project-manager/{main.js,manifest.json,styles.css} \
-  ~/Documents/MyVault/.obsidian/plugins/canvas-project-manager/
-
-# Windows (PowerShell)
-New-Item -ItemType Directory -Force -Path "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager"
-Copy-Item node_modules/canvas-project-manager/main.js,node_modules/canvas-project-manager/manifest.json,node_modules/canvas-project-manager/styles.css "C:\Users\John\Documents\MyVault\.obsidian\plugins\canvas-project-manager\"
 ```
 
 **Step 3: Enable Plugin in Obsidian**
@@ -208,7 +206,7 @@ Copy-Item node_modules/canvas-project-manager/main.js,node_modules/canvas-projec
 
 ---
 
-#### **Option B: Build from Source (For Development)**
+#### **Option C: Build from Source (For Development)**
 
 Use this method if you want to contribute or modify the plugin.
 
@@ -298,12 +296,12 @@ Create a canvas file for visual project management:
 Ask your AI assistant:
 
 ```
-Create a test milestone called "System Setup" with workstream "test"
+Create a test milestone called "System Setup"
 ```
 
 **Expected:**
-- AI creates `M-001` in `milestones/` folder
-- File contains YAML frontmatter with entity data
+- AI creates the milestone as `milestones/System_Setup.md` — filenames are **title-only**; the entity ID (`M-001`) lives in the YAML frontmatter, not the filename
+- A `schema.json` appears in the project folder on first run (bootstrapped from the built-in default)
 
 ### Test Plugin
 

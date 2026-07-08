@@ -102,7 +102,7 @@ Semantic search across all documents in the vault.
 {
   "results": [
     {
-      "doc_uri": "decisions/DEC-001_PostgreSQL_Database.md",
+      "doc_uri": "decisions/PostgreSQL_Database.md",
       "heading_path": "Security > Authentication",
       "excerpt": "We chose JWT tokens for authentication...",
       "start_char": 1234,
@@ -171,15 +171,7 @@ This combines:
 
 ### 1. Model Download
 
-On first run, MSRL downloads the **bge-m3** embedding model (~615MB) from HuggingFace:
-
-```bash
-# Pre-download models (optional)
-npx @ostanlabs/obsidian-mcp download-models
-
-# Or set custom model path
-export MSRL_MODEL_PATH=/path/to/models/bge-m3/model.onnx
-```
+Semantic search is powered by the [`@ostanlabs/md-retriever`](https://www.npmjs.com/package/@ostanlabs/md-retriever) engine, a dependency of the MCP server. On first use, it downloads the embedding model automatically — no manual step required. Just make sure the machine running `bin/mcp-server.mjs` has internet access on first start.
 
 ### 2. Initial Indexing
 
@@ -196,7 +188,7 @@ The first index build takes ~30-60 seconds for a typical vault (100-200 files):
 After initial indexing, updates are fast (~750ms per file):
 
 ```
-[MSRL] File changed: stories/S-015_Authentication.md
+[MSRL] File changed: stories/Authentication.md
 [MSRL] Re-indexed in 0.8s
 ```
 
@@ -243,14 +235,10 @@ Error: MSRL index not ready (state: building)
 ### Model Download Failed
 
 ```
-Error: Failed to download bge-m3 model
+Error: Failed to download embedding model
 ```
 
-**Solution:** Check internet connection or manually download model:
-
-```bash
-npx @ostanlabs/obsidian-mcp download-models
-```
+**Solution:** Check internet connection and restart the MCP server — the engine retries the download on next start.
 
 ### Slow Search
 

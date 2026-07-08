@@ -489,12 +489,12 @@ Features can be synced to Notion for external tracking:
 ### **Feature not showing in Coverage view**
 
 **Causes:**
-- File doesn't match `F-XXX` pattern
+- Frontmatter `id` doesn't match the `F-XXX` pattern
 - Frontmatter `type` is not "feature"
 - File is in wrong folder
 
 **Solution:**
-1. Check filename matches `F-001.md` format
+1. Check frontmatter has an `id` like `F-001` (filenames are title-only — the ID lives in frontmatter)
 2. Verify frontmatter has `type: feature`
 3. Click "Refresh" button in Coverage view
 

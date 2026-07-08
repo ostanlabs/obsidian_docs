@@ -53,27 +53,38 @@ Coming soon:
 
 **Solutions:**
 
-1. **Restart the AI assistant** - Quit completely and reopen
+1. **Restart the AI assistant** - Quit completely and reopen (in Claude Code, run `/mcp` to reconnect)
 2. **Check config file syntax** - Ensure valid JSON (no trailing commas)
 3. **Verify Node.js** - Run `node --version` (should be 18+)
-4. **Check VAULT_PATH** - Must be absolute path with forward slashes
-5. **Check logs** - Look for errors in AI assistant's developer console
+4. **Check the server was built** - `bin/mcp-server.mjs` must exist in your clone of the plugin repo (`npm run build` creates it)
+5. **Check VAULT_PATH** - Must be absolute path with forward slashes
+6. **Check logs** - Look for errors in AI assistant's developer console
 
 **Example correct config:**
 ```json
 {
   "mcpServers": {
-    "obsidian": {
-      "command": "npx",
-      "args": ["-y", "@ostanlabs/obsidian-mcp"],
+    "obsidian-mcp": {
+      "command": "node",
+      "args": ["/Users/john/code/obsidian_plugin/bin/mcp-server.mjs"],
       "env": {
-        "VAULT_PATH": "/Users/john/Documents/MyVault",
-        "DEFAULT_CANVAS": "main.canvas"
+        "VAULT_PATH": "/Users/john/Documents/MyVault/Projects/MyProject"
       }
     }
   }
 }
 ```
+
+Or with Claude Code:
+
+```bash
+claude mcp add obsidian-mcp \
+  -e VAULT_PATH="/Users/john/Documents/MyVault/Projects/MyProject" \
+  -- node /Users/john/code/obsidian_plugin/bin/mcp-server.mjs
+```
+
+!!! warning "Outdated setup"
+    If your config still uses `npx @ostanlabs/obsidian-mcp` or `obsidian-accomplishments-mcp`, replace it — the MCP server is now the bundled stdio binary built from the [plugin repository](https://github.com/ostanlabs/obsidian_plugin). See the [Installation Guide](getting-started/installation.md).
 
 ### Q: "No entities found" when asking AI about project
 
@@ -99,7 +110,7 @@ Coming soon:
 
 ### Q: Plugin doesn't appear in Community Plugins
 
-**A:** The plugin is currently under review. Install from source:
+**A:** The plugin is currently under review. Install manually — download `main.js`, `manifest.json`, and `styles.css` from [GitHub Releases](https://github.com/ostanlabs/obsidian_plugin/releases) into `/path/to/vault/.obsidian/plugins/canvas-project-manager/`, or build from source:
 
 ```bash
 git clone https://github.com/ostanlabs/obsidian_plugin.git
@@ -154,8 +165,8 @@ Think: Milestone → Story → Task (3-tier hierarchy)
 **A:** Yes, but it's easier to use AI:
 
 **Manual creation:**
-1. Create file in appropriate folder (e.g., `milestones/M-001.md`)
-2. Add YAML frontmatter with required fields
+1. Create file in appropriate folder, named after the title (e.g., `milestones/Q1_Launch.md` — filenames are title-only; the ID goes in frontmatter)
+2. Add YAML frontmatter with required fields (including `id` and `type`)
 3. Run "Populate from vault" to add to canvas
 
 **AI creation (recommended):**
@@ -175,12 +186,35 @@ Think: Milestone → Story → Task (3-tier hierarchy)
 
 **A:** Not recommended. Entity IDs are used in relationships. If you must:
 
-1. Update the ID in the file's frontmatter
-2. Rename the file to match
-3. Update all references in other entities
-4. Run "Reconcile relationships" command
+1. Update the ID in the file's frontmatter (the filename stays title-based, so no rename is needed)
+2. Update all references in other entities
+3. Run "Reconcile relationships" command
 
 Better: Create a new entity and archive the old one.
+
+### Q: Why did my file get `workstream: engineering`?
+
+**A:** `engineering` is the schema's **default workstream**. When an entity has no `workstream` in its frontmatter, the parser fills in the default instead of leaving it blank. If the entity belongs elsewhere, set `workstream` explicitly (e.g. `workstream: design`) — or change the default in your [`schema.json`](user-guide/schema-and-customization.md).
+
+### Q: Are `created`, `updated`, and `effort` still supported?
+
+**A:** No. These legacy frontmatter aliases are **no longer auto-migrated** on read:
+
+| Legacy field | Use instead |
+|--------------|-------------|
+| `created` | `created_at` |
+| `updated` | `updated_at` |
+| `effort` | `workstream` |
+
+Files still carrying only the legacy fields will get fresh `created_at`/`updated_at` timestamps and the default workstream on next write. Also note: unknown entity `type` values are now kept literal and flagged by `validate_project`, rather than being silently coerced to `task`.
+
+### Q: How do I customize entity types and relationships?
+
+**A:** Edit your vault's `schema.json` — the runtime single source of truth for entity types, relationships, positioning, and workstreams. Use the `get_schema_designer` tool for an interactive HTML editor, then apply with `set_schema`; changes hot-reload into both MCP validation and plugin positioning. See [Schema & Customization](user-guide/schema-and-customization.md).
+
+### Q: What are validation advisories?
+
+**A:** Soft, **non-blocking** guidance returned by `validate_project` alongside hard violations. The built-in advisories are fan-out guidelines: a document should document ≤ 2 features, a decision should affect ≤ 2 documents, and a feature should have ≤ 3 implementers. Each comes with a concrete reorganization suggestion. Writes are never blocked by advisories — reconcile them gradually. See [Relationships](user-guide/relationships.md#fan-out-guidelines-validation-advisories).
 
 ---
 
@@ -353,9 +387,9 @@ Performance may degrade with very large canvases (>500 nodes).
 
 - **GitHub Issues:** [Report bugs](https://github.com/ostanlabs/obsidian_plugin/issues)
 - **GitHub Discussions:** [Ask questions](https://github.com/ostanlabs/obsidian_plugin/discussions)
-- **Documentation:** [Read the guides](./guides/)
+- **Documentation:** [User Guide](user-guide/overview.md)
 
 ---
 
-**Last Updated:** January 2026
+**Last Updated:** July 8, 2026
 
