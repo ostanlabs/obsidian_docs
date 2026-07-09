@@ -214,7 +214,7 @@ Files still carrying only the legacy fields will get fresh `created_at`/`updated
 
 ### Q: What are validation advisories?
 
-**A:** Soft, **non-blocking** guidance returned by `validate_project` alongside hard violations. The built-in advisories are fan-out guidelines: a document should document ≤ 2 features, a decision should affect ≤ 2 documents, and a feature should have ≤ 3 implementers. Each comes with a concrete reorganization suggestion. Writes are never blocked by advisories — reconcile them gradually. See [Relationships](user-guide/relationships.md#fan-out-guidelines-validation-advisories).
+**A:** Soft, **non-blocking** guidance returned by `validate_project` alongside hard violations. The built-in advisories are fan-out guidelines: a document should document ≤ 2 features, a decision should affect ≤ 2 documents, a feature should have ≤ 3 implementers, and a feature should be documented by ≤ 2 documents (unify overlapping specs). Each comes with a concrete reorganization suggestion. Writes are never blocked by advisories — reconcile them gradually. See [Relationships](user-guide/relationships.md#fan-out-guidelines-validation-advisories).
 
 ---
 

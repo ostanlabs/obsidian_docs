@@ -140,7 +140,7 @@ You should see tools like:
 
 The plugin enables visual project management on Obsidian Canvas.
 
-> 📦 **Current version: 1.8.94** — available from [GitHub Releases](https://github.com/ostanlabs/obsidian_plugin/releases), on npm as [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager), or built from source.
+> 📦 **Current version: 1.8.96** — available from [GitHub Releases](https://github.com/ostanlabs/obsidian_plugin/releases), on npm as [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager), or built from source.
 
 !!! tip "Already cloned the repo?"
     If you built the MCP server above, `npm run build` already produced the plugin files (`main.js`, `manifest.json`, `styles.css`) in the repo root — skip to Step 2 of Option C.

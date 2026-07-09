@@ -76,7 +76,7 @@ Both components build from the **same repository** and share one entity engine �
 - Relationship visualization
 - Archive management
 
-📦 **NPM Package:** [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager) (v1.8.94)
+📦 **NPM Package:** [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager) (v1.8.96)
 📂 **Repository & Releases:** [ostanlabs/obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
 
 ---
@@ -89,7 +89,8 @@ Both components build from the **same repository** and share one entity engine �
 - **Title-only filenames** — entity files are named after their title (e.g. `Build_Auth_System.md`); the entity ID lives in frontmatter, not the filename. YAML is serialized quote-when-needed (plain scalars unless quoting is required).
 - **`schema.json` is the single source of truth** — entity types, relationships, positioning, and workstreams are runtime-editable via `set_schema` or the interactive HTML designer, and hot-reload into both MCP validation and plugin positioning. See [Schema & Customization](user-guide/schema-and-customization.md).
 - **Containment-chain positioning** — the canvas nests decision → document → feature → implementing story/milestone → workstream lane, and multi-target decisions/documents now resolve fully instead of falling into the orphan grid. See [Visual Canvas](user-guide/visual-canvas.md).
-- **Validation advisories** — `validate_project` now surfaces non-blocking fan-out guidance (document ≤ 2 features, decision ≤ 2 documents, feature ≤ 3 implementers) with concrete reorganization suggestions. See [Relationships](user-guide/relationships.md).
+- **Validation advisories** — `validate_project` now surfaces non-blocking fan-out guidance (document ≤ 2 features, decision ≤ 2 documents, feature ≤ 3 implementers, feature documented by ≤ 2 documents) with concrete reorganization suggestions. See [Relationships](user-guide/relationships.md).
+- **Hardened write path** — `update_entity` accepts flat relationship keys (they route into `relationships` automatically), updates the markdown body via a `body` key (`""` clears it), preserves the body on every rewrite, can update archived entities, and deletes passthrough-only fields set to `null`/`[]`. `reconcile_relationships` is recency-aware: a forward link edited more recently than its reverse is authoritative instead of being overwritten from stale reverse links.
 - **Stricter parser semantics** — legacy `created`/`updated`/`effort` aliases are no longer auto-migrated (use `created_at`/`updated_at`/`workstream`); a missing workstream defaults to `engineering`; unknown entity types are kept literal and flagged by validation. See the [FAQ](faq.md).
 
 ---

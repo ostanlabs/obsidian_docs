@@ -34,18 +34,7 @@ This is a two-component system that lets you:
 
 ## Components
 
-### 1. Obsidian MCP Server
-**AI-native project management via Model Context Protocol**
-
-- Create and update entities via natural language
-- Bulk operations and batch processing
-- Project analysis and insights
-- Dependency tracking and cycle detection
-- Search and filtering
-
-📦 **NPM Package:** [@ostanlabs/obsidian-mcp](https://www.npmjs.com/package/@ostanlabs/obsidian-mcp)
-
-### 2. Canvas Project Manager Plugin
+### 1. Canvas Project Manager Plugin
 **Visual project management in Obsidian**
 
 - Canvas-based visual organization
@@ -54,8 +43,19 @@ This is a two-component system that lets you:
 - Relationship visualization
 - Archive management
 
-🔧 **Status:** Under review (install from source)  
-📂 **Repository:** [obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
+📦 **NPM Package:** [@ostanlabs/canvas-project-manager](https://www.npmjs.com/package/@ostanlabs/canvas-project-manager)
+📂 **Repository & Releases:** [obsidian_plugin](https://github.com/ostanlabs/obsidian_plugin)
+
+### 2. Bundled MCP Server
+**AI-native project management via Model Context Protocol**
+
+- Create and update entities via natural language
+- Bulk operations and batch processing
+- Project analysis and insights
+- Dependency tracking and cycle detection
+- Search and filtering
+
+Built from the **same plugin repository** (`npm run build` produces `bin/mcp-server.mjs`) — the plugin and the MCP server share one entity engine and on-disk format. There is no separate MCP package to install.
 
 ---
 

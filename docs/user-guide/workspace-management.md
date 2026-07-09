@@ -558,7 +558,7 @@ See [Semantic Search Guide](semantic-search.md) for details.
 
 **Total:** 26 tests covering all workspace operations
 
-See `obsidian_mcp/src/tools/index.test.ts` for test details.
+See `tests/integration/` in the [plugin repository](https://github.com/ostanlabs/obsidian_plugin) for test details.
 
 ---
 

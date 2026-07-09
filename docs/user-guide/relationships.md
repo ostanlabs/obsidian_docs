@@ -98,8 +98,9 @@ The 3-tier execution structure:
 | `DOCUMENT_FANOUT` | A document should document **≤ 2** features | A document anchors to its *first* feature; wide fan-out strands it between distant clusters |
 | `DECISION_FANOUT` | A decision should affect **≤ 2** documents | Decisions position next to their first affected document; long lists scatter meaning |
 | `FEATURE_IMPLEMENTER_FANOUT` | A feature should have **≤ 3** implementers | Only the first implementer positions the feature; the rest are edge-only |
+| `FEATURE_DOC_FANOUT` | A feature should be documented by **≤ 2** documents | Wide doc fan-in usually signals stale or duplicated specs rather than thorough coverage |
 
-Each advisory comes with a concrete reorganization suggestion — e.g. split a wide document into per-feature documents linked via `previous_version`, narrow a decision's `affects` to the documents that materially change, or designate one umbrella story as a feature's primary implementer. Reconcile advisories gradually; don't treat them as errors. See [Schema & Customization](schema-and-customization.md) for how these rules derive from the schema.
+Each advisory comes with a concrete reorganization suggestion — e.g. split a wide document into per-feature documents linked via `previous_version`, narrow a decision's `affects` to the documents that materially change, designate one umbrella story as a feature's primary implementer, or unify a feature's overlapping documents into one current spec (chaining superseded versions via `previous_version`). Reconcile advisories gradually; don't treat them as errors. See [Schema & Customization](schema-and-customization.md) for how these rules derive from the schema.
 
 ---
 

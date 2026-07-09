@@ -511,25 +511,26 @@ AI: Next time uses "engineering"
 
 ### **Custom Normalization Rules**
 
-For advanced users, custom normalization rules can be added to the MCP server.
+Normalization aliases live in your vault's `schema.json` under `workstreams.normalization` — a map of alias → canonical workstream. Edit it directly, or use `get_schema_designer` + `set_schema`.
 
-**Location:** `obsidian_mcp/src/services/workstream-normalizer.ts`
-
-**Example:**
-```typescript
-const WORKSTREAM_ALIASES: Record<string, string> = {
-  // Existing aliases
-  'eng': 'engineering',
-  'dev': 'engineering',
-
-  // Custom aliases
-  'data-sci': 'data-science',
-  'ml': 'data-science',
-  'ai': 'data-science',
-};
+**Example (`schema.json`):**
+```json
+{
+  "workstreams": {
+    "values": ["engineering", "business", "data-science"],
+    "default": "engineering",
+    "normalization": {
+      "eng": "engineering",
+      "dev": "engineering",
+      "data-sci": "data-science",
+      "ml": "data-science",
+      "ai": "data-science"
+    }
+  }
+}
 ```
 
-**Note:** Requires MCP server restart.
+**Note:** Changes hot-reload into both the MCP server and the plugin — no restart needed. See [Schema & Customization](schema-and-customization.md).
 
 ---
 

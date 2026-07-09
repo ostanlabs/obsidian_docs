@@ -155,12 +155,15 @@ Update an existing entity.
 }
 ```
 
-!!! warning "Nest relationships under `updates.relationships`"
-    `{ "updates": { "parent": "M-001" } }` does **not** set the parent — the flat key is silently ignored. Use `{ "updates": { "relationships": { "parent": "M-001" } } }`.
+!!! tip "Flat relationship keys are accepted"
+    `{ "updates": { "parent": "M-001" } }` works — schema-declared relationship fields passed as flat keys are routed into `relationships` automatically. Nesting under `updates.relationships` remains the canonical form shown above.
 
 **Notes:**
 
 - Validates the updated entity against the active schema; only errors *introduced by this update* block the write (pre-existing validation errors on the stored entity do not)
+- A string `body` key replaces the markdown body below the frontmatter (`""` clears it); when `body` is not passed, the existing body is preserved
+- Setting a passthrough-only key (a field not valid for this entity type) to `null` or `[]` deletes it from the file
+- Works on archived entities too (files under `archive/` are found and updated in place)
 - String values are YAML-sanitized (colons replaced) like `create_entity`
 - Sets `updated_at` automatically
 
@@ -484,6 +487,9 @@ Fix inconsistent bidirectional relationships across all entities.
 
 **Use cases:** fixing broken relationships, ensuring consistency after manual frontmatter edits.
 
+!!! info "Recency-aware"
+    Reconciliation compares `updated_at` on both sides of a pair: if the forward side (e.g. a story's `implements`) was edited strictly more recently than the reverse side, the forward list is authoritative — stale reverse links are pruned instead of being copied back onto the forward side.
+
 ---
 
 ### `rebuild_index`
@@ -668,7 +674,6 @@ Get the status of the MSRL semantic search index.
 
 ### ❌ DON'T
 
-- Don't pass relationship fields as flat keys — they are silently ignored
 - Don't treat validate_project **advisories** as errors — they are non-blocking guidelines
 - Don't use `read_docs`/`update_doc` on entity files — use the entity tools
 - Don't run large batches without `dry_run` first
